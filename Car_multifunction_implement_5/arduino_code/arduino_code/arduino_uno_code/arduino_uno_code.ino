@@ -7,7 +7,7 @@
 #define LINE_OBSTACLE_MODE 3
 #define OBJECT_FOLLOWING_MODE 4
 #define REMOTE_CONTROL_MODE 5
-#define BATTERY_MODE 6
+#define BATTERY_MODE 6 // Add batery mode
 
 int currentMode = LINE_FOLLOWER_MODE;
 int currentSpeed = 150;
@@ -38,14 +38,17 @@ String remoteCommand = "stop";
 NewPing mySensor(ULTRASONIC_SENSOR_TRIG, ULTRASONIC_SENSOR_ECHO, 400);
 Servo myServo;
 
+// Line follower variable
 unsigned long lastLineDetectedTime = 0;
-const unsigned long LINE_LOST_TIMEOUT = 1000;
+const unsigned long LINE_LOST_TIMEOUT = 1000; 
+
+//define variables for battery
 unsigned long lastBatteryRequestTime = 0;
 const unsigned long BATTERY_REQUEST_INTERVAL = 2000;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(13, OUTPUT);
+  pinMode(13, OUTPUT);//debug LED
 
   // Motor pins
   pinMode(enableRightMotor, OUTPUT);
@@ -67,7 +70,7 @@ void setup() {
   pinMode(TOP_IR_SENSOR_RIGHT, INPUT);
   pinMode(TOP_IR_SENSOR_LEFT, INPUT);
 
-  rotateMotor(0, 0);
+  rotateMotor(0, 0);// stop initially
 }
 
 void loop() {
@@ -102,7 +105,7 @@ void loop() {
 void handleSerialCommands() {
   if (Serial.available()) {
     String input = Serial.readStringUntil('\n');
-    input.trim();
+    input.trim();//Remove any Whitespace
     
     if (input.startsWith("mode:")) {
       int mode = input.substring(5).toInt();
@@ -111,11 +114,12 @@ void handleSerialCommands() {
         Serial.print("Mode changed to: ");
         Serial.println(currentMode);
         if (currentMode != REMOTE_CONTROL_MODE) {
-          remoteCommand = "stop";
+          remoteCommand = "stop";//stop when switing from remote mode
           rotateMotor(0, 0);
         }
       }
     }
+    //checked the remote control command
     else if (input.startsWith("remote:")) {
       if (currentMode == REMOTE_CONTROL_MODE) {
         String command = input.substring(7);
@@ -174,11 +178,11 @@ void remoteControl() {
   } 
   else if (remoteCommand == "left") {
     // Left turn - right motor forward, left motor backward
-    rotateMotor(currentSpeed, -currentSpeed);
+    rotateMotor(currentSpeed, -currentSpeed/2);//changed this line to correct direction changed
   } 
   else if (remoteCommand == "right") {
     // Right turn - left motor forward, right motor backward
-    rotateMotor(-currentSpeed, currentSpeed);
+    rotateMotor(-currentSpeed/2, currentSpeed);
   } 
   else { // "stop"
     rotateMotor(0, 0);
@@ -197,10 +201,10 @@ void rotateMotor(int rightMotorSpeed, int leftMotorSpeed) {
   } else if (rightMotorSpeed < 0) {
     digitalWrite(rightMotorPin1, LOW);
     digitalWrite(rightMotorPin2, HIGH);
-  } else {
+  } /*else {
     digitalWrite(rightMotorPin1, LOW);
     digitalWrite(rightMotorPin2, LOW);
-  }
+  }*/
 
   // Left motor control
   if (leftMotorSpeed > 0) {
@@ -209,10 +213,10 @@ void rotateMotor(int rightMotorSpeed, int leftMotorSpeed) {
   } else if (leftMotorSpeed < 0) {
     digitalWrite(leftMotorPin1, LOW);
     digitalWrite(leftMotorPin2, HIGH);
-  } else {
+  } /*else {
     digitalWrite(leftMotorPin1, LOW);
     digitalWrite(leftMotorPin2, LOW);
-  }
+  }*/
 
   analogWrite(enableRightMotor, abs(rightMotorSpeed));
   analogWrite(enableLeftMotor, abs(leftMotorSpeed));
