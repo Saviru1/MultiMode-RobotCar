@@ -93,18 +93,29 @@ A smart robot system built with Arduino and ESP8266, capable of autonomous navig
 ## 📁 Folder Structure
 
 autonomous-robot-controller/
-│
+
 ├── code
-| ├── arduino_uno
-| ├── esp8266_code
+
+    | ├── arduino_uno
+
+    | ├── esp8266_code
+
 ├── gui_design_png
-| |── main_controller_tab
-| ├── remote_controller_tab
-| ├── status_tab
+
+    | |── main_controller_tab
+
+    | ├── remote_controller_tab
+
+    | ├── status_tab
+
 ├── .gitignore
+
 |__ LICENSE
+
 |__ README.md
+
 |__ circuit_diagram_image
+
 │__ multi_mode_robot_working_video.mp4
 
 
